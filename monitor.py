@@ -1,6 +1,10 @@
 import os
 import discum
 import requests
+import threading
+from sseclient import SSEClient
+import random
+import time
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 NTFY_TOPIC = os.getenv("NTFY_TOPIC")
@@ -50,19 +54,68 @@ def on_message(resp):
 
                 break
 
-import random
-import time
+
+def notify_system(text):
+
+    requests.post(
+        f"https://ntfy.sh/{NTFY_TOPIC}",
+        data=text.encode("utf-8"),
+        headers={
+            "Title": "Discord Monitor System",
+            "Priority": "4"
+        }
+    )
+
+def control_listener():
+
+    url = f"https://ntfy.sh/{NTFY_TOPIC}/sse"
+
+    messages = SSEClient(url)
+
+    for msg in messages:
+
+        data = msg.data.strip()
+
+        print(f"Control command: {data}")
+
+        if data.lower() == "restartnow":
+
+            notify_system("Remote restart triggered")
+
+            os._exit(1)
+
+threading.Thread(
+    target=control_listener,
+    daemon=True
+).start()
+
 
 while True:
 
     try:
+
         print("Connecting...")
+
+        notify_system("Connecting to Discord gateway")
+
         bot.gateway.run(auto_reconnect=True)
 
+        notify_system("Gateway closed unexpectedly")
+
     except Exception as e:
-        print(e)
+
+        error_msg = f"Gateway crashed:\n{str(e)}"
+
+        print(error_msg)
+
+        notify_system(error_msg)
 
     delay = random.randint(10, 30)
 
-    print(f"Reconnect in {delay}s")
+    msg = f"Reconnect in {delay}s"
+
+    print(msg)
+
+    notify_system(msg)
+
     time.sleep(delay)
