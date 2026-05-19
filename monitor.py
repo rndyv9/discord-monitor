@@ -68,7 +68,7 @@ def notify_system(text):
 
 def control_listener():
 
-    url = f"https://ntfy.sh/{CONTROL_TOPIC}/json"
+    url = f"https://ntfy.sh/{NTFY_TOPIC}/json"
 
     print("Control listener started")
 
