@@ -11,7 +11,7 @@ NTFY_TOPIC = os.getenv("NTFY_TOPIC")
 
 KEYWORDS = os.getenv("KEYWORDS", "").lower().split(",")
 
-bot = discum.Client(token=TOKEN)
+bot = discum.Client(token=TOKEN, log=False)
 
 def notify(text):
 
@@ -68,25 +68,40 @@ def notify_system(text):
 
 def control_listener():
 
-    url = f"https://ntfy.sh/{NTFY_TOPIC}/sse"
+    url = f"https://ntfy.sh/{CONTROL_TOPIC}/json"
 
-    messages = SSEClient(url)
+    print("Control listener started")
 
-    for msg in messages:
+    while True:
 
-        data = msg.data.strip()
+        try:
 
-        print(f"RAW DATA: {repr(data)}")
+            response = requests.get(url, stream=True)
 
-        lower = data.lower()
+            for line in response.iter_lines():
 
-        if "restartnow" in lower:
+                if not line:
+                    continue
 
-            print("Remote restart triggered")
+                data = line.decode("utf-8")
 
-            notify_system("Remote restart triggered")
+                print(f"CONTROL RAW: {data}")
 
-            os._exit(1)
+                lower = data.lower()
+
+                if "restartnow" in lower:
+
+                    print("Remote restart triggered")
+
+                    notify_system("Remote restart triggered")
+
+                    os._exit(1)
+
+        except Exception as e:
+
+            print(f"Control listener error: {e}")
+
+            time.sleep(10)
 
 threading.Thread(
     target=control_listener,
