@@ -50,4 +50,19 @@ def on_message(resp):
 
                 break
 
-bot.gateway.run(auto_reconnect=True)
+import random
+import time
+
+while True:
+
+    try:
+        print("Connecting...")
+        bot.gateway.run(auto_reconnect=True)
+
+    except Exception as e:
+        print(e)
+
+    delay = random.randint(10, 30)
+
+    print(f"Reconnect in {delay}s")
+    time.sleep(delay)
