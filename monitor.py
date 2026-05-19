@@ -76,9 +76,13 @@ def control_listener():
 
         data = msg.data.strip()
 
-        print(f"Control command: {data}")
+        print(f"RAW DATA: {repr(data)}")
 
-        if data.lower() == "restartnow":
+        lower = data.lower()
+
+        if "restartnow" in lower:
+
+            print("Remote restart triggered")
 
             notify_system("Remote restart triggered")
 
@@ -89,6 +93,7 @@ threading.Thread(
     daemon=True
 ).start()
 
+notify_system("Monitor started")
 
 while True:
 
