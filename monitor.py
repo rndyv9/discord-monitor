@@ -2,9 +2,12 @@ import os
 import discum
 import requests
 import threading
-from sseclient import SSEClient
 import random
 import time
+from datetime import datetime
+
+START_TIME = datetime.now()
+RECONNECT_COUNT = 0
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 NTFY_TOPIC = os.getenv("NTFY_TOPIC")
@@ -66,6 +69,18 @@ def notify_system(text):
         }
     )
 
+def get_status():
+
+    uptime = datetime.now() - START_TIME
+
+    return (
+        f"Monitor Status\n\n"
+        f"Online: YES\n"
+        f"Uptime: {str(uptime).split('.')[0]}\n"
+        f"Keywords: {len(KEYWORDS)}\n"
+        f"Reconnects: {RECONNECT_COUNT}"
+    )
+
 def control_listener():
 
     url = f"https://ntfy.sh/{NTFY_TOPIC}/json"
@@ -88,6 +103,12 @@ def control_listener():
                 print(f"CONTROL RAW: {data}")
 
                 lower = data.lower()
+
+		if "statusnow" in lower:
+
+		    print("Status requested")
+
+		    notify_system(get_status())
 
                 if "restartnow" in lower:
 
@@ -112,6 +133,7 @@ notify_system("Monitor started")
 
 while True:
 
+    RECONNECT_COUNT += 1
     try:
 
         print("Connecting...")
