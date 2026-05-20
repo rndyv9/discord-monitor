@@ -104,11 +104,11 @@ def control_listener():
 
                 lower = data.lower()
 
-		if "statusnow" in lower:
+                if "statusnow" in lower:
 
-		    print("Status requested")
+                    print("Status requested")
 
-		    notify_system(get_status())
+                    notify_system(get_status())
 
                 if "restartnow" in lower:
 
