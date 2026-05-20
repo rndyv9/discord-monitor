@@ -46,7 +46,7 @@ def on_message(resp):
 
             if keyword in lower:
 
-                CAPTURE_COUNT += 1
+                global CAPTURE_COUNT += 1
                 text = (
                     f"Keyword: {keyword}\n"
                     f"User: {m['author']['username']}\n"
