@@ -80,7 +80,7 @@ def get_status():
         f"Online: YES\n"
         f"Uptime: {str(uptime).split('.')[0]}\n"
         f"Keywords: {len(KEYWORDS)}\n"
-        f"Captures: {CAPTURE_COUNT}"
+        f"Captures: {CAPTURE_COUNT}\n"
         f"Reconnects: {RECONNECT_COUNT}"
     )
 
