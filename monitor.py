@@ -8,6 +8,7 @@ from datetime import datetime
 
 START_TIME = datetime.now()
 RECONNECT_COUNT = 0
+CAPTURE_COUNT = 0
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 NTFY_TOPIC = os.getenv("NTFY_TOPIC")
@@ -45,6 +46,7 @@ def on_message(resp):
 
             if keyword in lower:
 
+                CAPTURE_COUNT += 1
                 text = (
                     f"Keyword: {keyword}\n"
                     f"User: {m['author']['username']}\n"
@@ -78,6 +80,7 @@ def get_status():
         f"Online: YES\n"
         f"Uptime: {str(uptime).split('.')[0]}\n"
         f"Keywords: {len(KEYWORDS)}\n"
+        f"Captures: {CAPTURE_COUNT}"
         f"Reconnects: {RECONNECT_COUNT}"
     )
 
